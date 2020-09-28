@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@master/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe-ar@master/dist/aframe-ar.min.js"></script>
+
+    <title>Chenz RayCasting</title>
+  </head>
+
+  <body>
+    <a-scene
+      ar=""
+      raycaster-move="target:#mark"
+      inspector=""
+      keyboard-shortcuts=""
+      screenshot=""
+      vr-mode-ui=""
+      device-orientation-permission-ui=""
+      webxr-ar=""
+      mozilla-xr-ar=""
+      ar-planes=""
+      ar-anchors=""
+    >
+      <!-- Use AR raycaster, and set raycaster to ignore all A-Frame objects like logos. -->
+      <a-entity ar-raycaster="" raycaster="objects:none"></a-entity>
+      <!-- Declare a ring to use as the raycaster intersection mark. -->
+      <a-ring
+        id="mark"
+        rotation="-90 0 0"
+        radius-inner="0.01"
+        radius-outer="0.02"
+        material=""
+        geometry=""
+      ></a-ring>
+      <canvas
+        class="a-canvas a-grab-cursor"
+        data-aframe-canvas="true"
+        width="874"
+        height="693"
+        style=""
+      ></canvas>
+      <div class="a-loader-title" style="display: none"></div>
+      <a-entity
+        camera=""
+        position=""
+        wasd-controls=""
+        rotation=""
+        look-controls=""
+        aframe-injected=""
+      ></a-entity>
+      <div class="a-enter-vr" aframe-injected="">
+        <button
+          class="a-enter-vr-button"
+          title="Enter VR mode with a headset or fullscreen mode on a desktop. Visit https://webvr.rocks or https://webvr.info for more information."
+          aframe-injected=""
+        ></button>
+      </div>
+      <div class="a-enter-ar a-hidden" aframe-injected="">
+        <button
+          class="a-enter-ar-button"
+          title="Enter AR mode with a headset or handheld device. Visit https://webvr.rocks or https://webvr.info for more information."
+          aframe-injected=""
+        ></button>
+      </div>
+      <div class="a-orientation-modal a-hidden" aframe-injected="">
+        <button aframe-injected="">Exit VR</button>
+      </div>
+      <a-entity
+        light=""
+        data-aframe-default-light=""
+        aframe-injected=""
+      ></a-entity
+      ><a-entity
+        light=""
+        position=""
+        data-aframe-default-light=""
+        aframe-injected=""
+      ></a-entity
+      ><a-entity scale="" position="">
+        <a-entity>
+          <a-sphere
+            position="0 0.5 0"
+            scale="0.2 1 0.2"
+            material="color:blue;opacity:0.5"
+            geometry=""
+          ></a-sphere> </a-entity></a-entity
+    ></a-scene>
+    <script>
+      var raycaster = document.querySelector("[ar-raycaster]");
+      var mark = document.querySelector("#mark");
+
+      raycaster.addEventListener("raycaster-intersection", function (evt) {
+        // Turn the mark green and move it to the intersection point.
+        mark.setAttribute("color", "green");
+        // Note, movement will now be done via raycaster-move component.
+        //mark.setAttribute('position', evt.detail.intersections[0].point);
+      });
+
+      raycaster.addEventListener("raycaster-intersection-cleared", function (
+        evt
+      ) {
+        // Turn the mark red.  FIXME: lerp position
+        mark.setAttribute("color", "red");
+      });
+    </script>
+  </body>
+</html>
