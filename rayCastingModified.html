@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe@handle-missing-rotationrate-dist/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe-ar@master/dist/aframe-ar.min.js"></script>
+    <script>
+      // AFRAME no longer sends intersection event every time intersection changes position;
+      // this component is modified from docs to move a different entity than the one hit.
+      AFRAME.registerComponent("raycaster-move", {
+        schema: {
+          target: { type: "selector" },
+        },
+        init: function () {
+          // Use events to figure out what raycaster is listening so we don't have to
+          // hardcode the raycaster.
+          this.el.addEventListener("raycaster-intersected", (evt) => {
+            this.raycaster = evt.detail.el;
+          });
+          this.el.addEventListener("raycaster-intersected-cleared", (evt) => {
+            this.raycaster = null;
+          });
+        },
+        update: function (oldData) {
+          //
+        },
+        tick: function () {
+          if (!this.raycaster) {
+            return;
+          } // Not intersecting.
+
+          let intersection = this.raycaster.components.raycaster.getIntersection(
+            this.el
+          );
+          if (!intersection) {
+            return;
+          }
+          //console.log(intersection.point);
+          this.data.target.setAttribute("position", intersection.point);
+        },
+      });
+
+      const content = `
+      <a-entity>
+        <a-sphere position="0 0.5 0" scale="0.2 1 0.2"></a-sphere>
+      </a-entity>`;
+
+      function markit(e) {
+        // Put the logo where the mark is.
+        var mark = document.querySelector("#mark");
+        var el = document.createElement("a-entity");
+        AFRAME.scenes[0].appendChild(el);
+        el.innerHTML = content;
+        el.setAttribute("scale", "0.1, 0.1, 0.1");
+        el.setAttribute("position", mark.getAttribute("position"));
+        var inner = el.querySelector("a-sphere");
+        if (e.type == "touchstart") {
+          inner.setAttribute("material", "color:red;opacity:0.5");
+        }
+        if (e.type == "touchend") {
+          inner.setAttribute("material", "color:green;opacity:0.5");
+        }
+        if (e.type == "click") {
+          inner.setAttribute("material", "color:blue;opacity:0.5");
+        }
+      }
+
+      window.addEventListener("touchstart", markit);
+      window.addEventListener("touchend", markit);
+      window.addEventListener("click", markit);
+    </script>
+  </head>
+  <body>
+    <a-scene ar raycaster-move="target:#mark">
+      <!-- We're using ar, and mark should follow raycaster. -->
+      <!-- Use AR raycaster, and set raycaster to ignore all A-Frame objects like logos. -->
+      <a-entity ar-raycaster raycaster="objects:none"></a-entity>
+      <!-- Declare a ring to use as the raycaster intersection mark. -->
+      <a-ring
+        id="mark"
+        rotation="-90 0 0"
+        radius-inner="0.01"
+        radius-outer="0.02"
+      ></a-ring>
+      <a-camera>
+        <a-text
+          id="hud"
+          align="center"
+          wrap-count="800"
+          position="0 -0.1 -0.25"
+          value="Modified RayCasting"
+        ></a-text>
+      </a-camera>
+    </a-scene>
+    <script>
+      var raycaster = document.querySelector("[ar-raycaster]");
+      var mark = document.querySelector("#mark");
+
+      raycaster.addEventListener("raycaster-intersection", function (evt) {
+        // Turn the mark green and move it to the intersection point.
+        mark.setAttribute("color", "green");
+        // Note, movement will now be done via raycaster-move component.
+        //mark.setAttribute('position', evt.detail.intersections[0].point);
+      });
+
+      raycaster.addEventListener("raycaster-intersection-cleared", function (
+        evt
+      ) {
+        // Turn the mark red.
+        mark.setAttribute("color", "red");
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Another Modified</title>
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe@handle-missing-rotationrate-dist/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe-ar@master/dist/aframe-ar.min.js"></script>
+  </head>
+  <body>
+    <script>
+      AFRAME.registerComponent("ray-mover", {
+        schema: {
+            target: {type: 'selector'}
+        },
+        init: function () {
+          this.el.addEventListener("raycaster-intersected", (evt) => {
+            this.raycaster = evt.detail.el;
+            let hud = document.querySelector("#hud");
+            hud.setAttribute("value", this.detail.el);
+          });
+          this.el.addEventListener("raycaster-intersected-cleared", (evt) => {
+            this.raycaster = null;
+          });
+        },
+        tick: function () {
+          if (!this.raycaster) {
+            return;
+          } 
+          let intersection = this.raycaster.components.raycaster.getIntersection(
+            this.el
+          );
+          if (!intersection) {
+            return;
+          }
+          this.data.target.setAttribute("position", intersection.point);
+        },
+      });
+    </script>
+
+    <a-scene ar>
+      <a-camera ar-raycaster ray-mover="target:#mark" raycaster="objects:none">
+        <a-text
+          id="hud"
+          align="center"
+          wrap-count="800"
+          position="0 -0.1 -0.25"
+          value="raycaster example"
+        ></a-text>
+      </a-camera>
+
+      <a-ring
+        id="mark"
+        rotation="-90 0 0"
+        radius-inner="0.01"
+        radius-outer="0.02"
+      ></a-ring>
+    </a-scene>
+  </body>
+</html>
