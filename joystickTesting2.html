@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrturck/aframe-joystick/master/joystick.min.js"></script>
+  </head>
+  <body>
+    <script>
+      AFRAME.registerComponent("keyboard-relay", {
+          schema: { 
+              movement : {type:'vec3'}
+          },
+        tick: function() {
+            if (this.movement.length() == 0){
+ 
+                return;
+            }
+          
+            let cam = document.querySelector("#camera");
+            let position = cam.getAttribute("position");
+            position.x += this.movement.x;
+            position.y +=this.movement.y;
+            position.z += this.movement.z;
+            cam.setAttribute("position", position);
+        },
+        init: function () {
+          this.movement = new THREE.Vector3();
+          let motion = this.movement;
+ 
+          let touchDiv = document.querySelector("#fwd");
+          let backDiv = document.querySelector("#back");
+          let leftDiv = document.querySelector("#left");
+          let rightDiv = document.querySelector("#right");
+          
+
+
+          let direction = new THREE.Vector3();  
+          let el = this.el;
+
+          leftDiv.addEventListener("click", function (ev) {
+              console.log(this.movement);
+            let cam = document.querySelector("#camera");
+
+            let camDirection = el.sceneEl.camera.getWorldDirection(direction);
+            perpDirection = camDirection.cross(new THREE.Vector3(0,1,0));
+            perpDirection.multiplyScalar(-0.1);
+        
+            motion.x = perpDirection.x;
+            motion.y = perpDirection.y;
+            motion.z = perpDirection.z;
+            console.log(motion);
+          });
+
+          rightDiv.addEventListener("touchstart", function (ev) {
+            let cam = document.querySelector("#camera");
+
+            let camDirection = el.sceneEl.camera.getWorldDirection(direction);
+            perpDirection = camDirection.cross(new THREE.Vector3(0,1,0));
+            perpDirection.multiplyScalar(0.1);
+        
+            motion.x = perpDirection.x;
+            motion.y = perpDirection.y;
+            motion.z = perpDirection.z;
+            console.log(motion);
+          });
+
+
+          backDiv.addEventListener("touchstart", function (ev) {
+            let cam = document.querySelector("#camera");
+
+            let camDirection = el.sceneEl.camera.getWorldDirection(direction);
+            camDirection.multiplyScalar(-0.1);
+            motion.x = camDirection.x;
+            motion.y = camDirection.y;
+            motion.z = camDirection.z;
+            console.log(motion);
+          });
+
+          touchDiv.addEventListener("touchstart", function (ev) {
+            let cam = document.querySelector("#camera");
+
+            let camDirection = el.sceneEl.camera.getWorldDirection(direction);
+            camDirection.multiplyScalar(0.1);
+                     
+            motion.x = camDirection.x;
+            motion.y = camDirection.y;
+            motion.z = camDirection.z;
+          });
+          touchDiv.addEventListener("touchend", function (ev) {
+            motion.x = 0;
+            motion.y = 0;
+            motion.z = 0;
+          });
+        },
+      });
+    </script>
+    <div
+      style="
+        z-index: 5;
+        width: 100px;
+        height: 50px;
+        position: absolute;
+        left: 40px;
+        bottom: 100px;
+        text-align: center;
+        vertical-align: middle;
+        background-color: wheat;
+      "
+      id="fwd"
+    >
+      Go Fwd
+    </div>
+
+    <div
+      style="
+        z-index: 5;
+        width: 100px;
+        height: 50px;
+        position: absolute;
+        left: 40px;
+        bottom: 40px;
+        text-align: center;
+        vertical-align: middle;
+        background-color: wheat;
+      "
+      id="back"
+    >
+      Go Backward
+    </div>
+
+    <div
+      style="
+        z-index: 5;
+        width: 20px;
+        height: 100px;
+        position: absolute;
+        left: 10px;
+        bottom: 40px;
+        background-color: wheat;
+      "
+      id="left"
+    >
+      Go Left
+    </div>
+
+    <div
+      style="
+        z-index: 5;
+        width: 20px;
+        height: 100px;
+        position: absolute;
+        left: 150px;
+        bottom: 40px;
+        background-color: wheat;
+      "
+      id="right"
+    >
+      Go Right
+    </div>
+
+    <a-scene joystick vr-mode-ui="enabled: false">
+      <a-entity
+        keyboard-relay
+        camera
+        id="camera"
+        position="0 1.6 0"
+        look-controls
+        wasd-controls
+      ></a-entity>
+      <a-box
+        scale="0.25 0.25 0.25"
+        position="-0.25 0.125 -0.75"
+        rotation="0 45 0"
+        color="#4CC3D9"
+        shadow
+      ></a-box>
+      <a-sphere
+        scale="0.25 0.25 0.25"
+        position="0 0.3125 -1.25"
+        radius="1.25"
+        color="#EF2D5E"
+        shadow
+      ></a-sphere>
+      <a-cylinder
+        scale="0.25 0.25 0.25"
+        position="0.25 0.1875 -0.75"
+        radius="0.5"
+        height="1.5"
+        color="#FFC65D"
+        shadow
+      ></a-cylinder>
+      <a-plane
+        scale="0.25 0.25 0.25"
+        position="0 0 -1"
+        rotation="-90 0 0"
+        width="4"
+        height="4"
+        color="#7BC8A4"
+        shadow
+      ></a-plane>
+    </a-scene>
+  </body>
+</html>

@@ -9,7 +9,7 @@
   </head>
   <body>
     <script>
-      AFRAME.registerComponent("ray-mover", {
+      ("ray-mover", {
         schema: {
             target: {type: 'selector'}
         },
@@ -33,6 +33,7 @@
           if (!intersection) {
             return;
           }
+        //   moving the circle here
           this.data.target.setAttribute("position", intersection.point);
         },
       });

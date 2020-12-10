@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe@handle-missing-rotationrate-dist/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/chenzlabs/aframe-ar@master/dist/aframe-ar.min.js"></script>
+  </head>
+  <body>
+    <script>
+      AFRAME.registerComponent("ray-intepreter", {
+        scheme: {},
+        init: function () {
+          let el = this.el;
+
+          el.addEventListener("raycaster-intersected", function (ev) {
+
+          });
+
+          el.addEventListener("raycaster-intersected-cleared", function () {
+            
+          }); 
+        },
+        tick: function () {},
+      });
+    </script>
+    <div id="bottom_text">this is bottom text</div>
+    <a-scene ar raycaster-move="target:#mark">
+      <a-entity ar-raycaster raycaster="objects:none"></a-entity>
+      <a-ring
+        id="mark"
+        rotation="-90 0 0"
+        radius-inner="0.01"
+        radius-outer="0.02"
+      ></a-ring>
+      <a-camera> </a-camera>
+    </a-scene>
+  </body>
+</html>
